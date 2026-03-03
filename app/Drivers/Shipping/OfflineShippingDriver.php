@@ -1,0 +1,82 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Drivers\Shipping;
+
+use App\Contract\ShippingDriverInterFace;
+use App\Data\RegionData;
+use App\Data\CartData;
+use App\Data\ShippingData;
+use App\Data\ShippingServiceData;
+use Spatie\LaravelData\DataCollection;
+
+class OfflineShippingDriver implements ShippingDriverInterFace
+{
+
+    public readonly string $driver;
+
+    public function __construct()
+    {
+        $this->driver = 'offline';
+    }
+
+    /** @return DataCollection<ShippingServiceData> */
+    public function getServices() : DataCollection
+    {
+        return ShippingServiceData::collect([
+            [
+                'driver' => $this->driver,
+                'code' => 'offline-flat-15',
+                'courier' => 'Internal Courier',
+                'service' => 'instant'
+            ],
+            [
+                'driver' => $this->driver,
+                'code' => 'offline-flat-5',
+                'courier' => 'Internal Courier',
+                'service' => 'sameDay'
+            ],
+        ], DataCollection::class);
+    }
+
+    public function getRate(
+        RegionData $origin, 
+        RegionData $destionation, 
+        CartData $cart, 
+        ShippingServiceData $shipping_service
+        ): ?ShippingData
+    
+    {
+        $data = null;
+
+        switch($shipping_service->code) {
+            case 'offline-flat-15':
+                $data = ShippingData::from([
+                    'driver' => $this->driver,
+                    'courier' => $shipping_service->courier,
+                    'service' => $shipping_service->service,
+                    'estimated_delivery' => "1-2 jam",
+                    'cost' => 15000,
+                    'weight' => $cart->total_weight,
+                    'origin' => $origin,
+                    'destination' => $destionation
+                ]);
+                break;
+            case 'offline-flat-5':
+                $data = ShippingData::from([
+                    'driver' => $this->driver,
+                    'courier' => $shipping_service->courier,
+                    'service' => $shipping_service->service,
+                    'estimated_delivery' => "1 hari",
+                    'cost' => 5000,
+                    'weight' => $cart->total_weight,
+                    'origin' => $origin,
+                    'destination' => $destionation
+                ]);
+                break;
+        }
+
+        return $data;
+    }
+}
