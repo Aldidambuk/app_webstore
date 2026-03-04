@@ -29,7 +29,7 @@ class ShippingData extends Data
         public int $weight, //gram
         public RegionData $origin,
         public RegionData $destination,
-        public string|null $log_url
+        public string|null $logo_url
     ) {
         $this->cost_formatted = Number::currency($cost);
         $courier_label =ucfirst($courier);
