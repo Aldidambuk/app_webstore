@@ -42,6 +42,15 @@ class ProductCatalog extends Component
         ];
     }
 
+    protected function getValidationAttributes()
+    {
+        return[
+            'select_collections' => 'Collection',
+            'sort_by'  => 'Sort By',
+        ];
+    }
+
+
     public function applyFilters()
     {
         $this->validate();
