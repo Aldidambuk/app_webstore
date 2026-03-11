@@ -43,6 +43,7 @@ class AddToCart extends Component
     {
 
         $this->validate();
+        // dd($this->weight);
 
         $cart->addOrUpdate(new CartItemData(
             sku: $this->sku,

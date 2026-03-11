@@ -47,10 +47,10 @@
                     </label>
 
                     <div class="mt-2 space-y-3">
-                        <input id="af-payment-billing-address" wire:model="data.shipping_line" type="text"
-                            class="@error('data.shipping_line') border-red-600 @enderror py-1.5 sm:py-2 px-3 pe-11 block w-full border-gray-200 shadow-2xs sm:text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+                        <input id="af-payment-billing-address" wire:model="data.address_line" type="text"
+                            class="@error('data.address_line') border-red-600 @enderror py-1.5 sm:py-2 px-3 pe-11 block w-full border-gray-200 shadow-2xs sm:text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
                             placeholder="Street Address">
-                        @error('data.shipping_line')
+                        @error('data.address_line')
                             <p class="mt-2 text-xs text-red-600" id="hs-validation-name-error-helper">
                                 {{ $message }}</p>
                         @enderror
@@ -100,9 +100,15 @@
                     </div>
                 </div>
                 <!-- End Section -->
+
                 <label for="af-shipping-method" class="inline-block text-sm font-medium dark:text-white">
                     Shipping Method
                 </label>
+
+                @error('data.shipping_hash')
+                    <p class="mt-2 text-xs text-red-600" id="hs-validation-name-error-helper">
+                        {{ $message }}</p>
+                @enderror
 
                 <div class="mt-2 space-y-3">
                     <div class="w-full text-center relative flex justify-center">
@@ -149,31 +155,29 @@
                 <label for="af-payment-method" class="inline-block mt-5 text-sm font-medium dark:text-white">
                     Payment Method
                 </label>
+                @error('data.payment_method_hash')
+                    <p class="mt-2 text-xs text-red-600" id="hs-validation-name-error-helper">
+                        {{ $message }}</p>
+                @enderror
                 <div class="mt-2 space-y-3">
                     <div class="grid space-y-2">
-                        @php
-                            $payment_methods = [
-                                'Bank Transfer - BCA',
-                                'Bank Transfer - BNI',
-                                'Virtual Account BCA',
-                                'QRIS',
-                                'Dana',
-                            ];
-                        @endphp
-                        @foreach ($payment_methods as $key => $item)
-                            <label for="payment_method_{{ $key }}"
+                        @foreach ($this->payment_methods->toCollection() as $key => $payment_method)
+                            <label for="payment_method_{{ $payment_method->hash }}"
                                 class="flex w-full p-2 text-sm bg-white border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
-                                <input type="radio" name="hs-vertical-radio-in-form"
+                                <input type="radio" wire:key='payment_method_'{{ $payment_method->hash }}
+                                    wire:model.live='payment_method_selector.payment_method_selected'
+                                    value="{{ $payment_method->hash }}"
                                     class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 checked:border-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
-                                    id="payment_method_{{ $key }}">
+                                    id="payment_method_{{ $payment_method->hash }}">
                                 <span
-                                    class="text-sm text-gray-500 ms-3 dark:text-neutral-400">{{ $item }}</span>
+                                    class="text-sm text-gray-500 ms-3 dark:text-neutral-400">{{ $payment_method->label }}</span>
                             </label>
                         @endforeach
 
                     </div>
                 </div>
             </div>
+
             <div class="p-10">
                 <h1 class="mb-5 text-2xl font-light">Order Summary</h1>
                 <div>
@@ -183,6 +187,8 @@
                 </div>
                 <div class="grid gap-5">
                     <!-- List Group -->
+                    {{-- @dump($this->cart) --}}
+                    {{-- @dump($this->shipping_method) --}}
                     <ul class="flex flex-col mt-3">
                         <li
                             class="inline-flex items-center px-4 py-3 -mt-px text-sm text-gray-800 border border-gray-200 gap-x-2 first:rounded-t-lg first:mt-0 last:rounded-b-lg dark:border-neutral-700 dark:text-neutral-200">
@@ -195,10 +201,17 @@
                             class="inline-flex items-center px-4 py-3 -mt-px text-sm text-gray-800 border border-gray-200 gap-x-2 first:rounded-t-lg first:mt-0 last:rounded-b-lg dark:border-neutral-700 dark:text-neutral-200">
                             <div class="flex items-center justify-between w-full">
                                 <span class="flex flex-col">
-                                    <span>Shipping (JNT YES)</span>
-                                    <span class="text-xs">570 gram</span>
+                                    <span>{{ $this->shipping_method?->label ?? '-' }}</span>
+                                    <span class="text-xs">{{ $this->shipping_method?->weight ?? 0 }} gram</span>
                                 </span>
-                                <span>{{ data_get($this->summaries, 'shipping_total_formatted') }}</span>
+                                <span class="relative">
+                                    {{ data_get($this->summaries, 'shipping_total_formatted') }}
+                                    <div wire:loading wire:target="shipping_selector.shipping_method"
+                                        class="absolute right-3 top-3 animate-spin inline-block size-4 border-3 border-current border-t-transparent text-blue-600 rounded-full dark:text-blue-500"
+                                        role="status" aria-label="loading">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </span>
                             </div>
                         </li>
                         <li
