@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Data\CartItemData;
 use App\Data\CheckoutData;
 use App\Data\SalesOrderData;
-use App\Models\product;
+use App\Events\SalesOrderCreatedEvent;
+use App\Models\Product;
 use App\Models\SalesOrder;
 use App\States\SalesOrder\Pending;
 use Carbon\Carbon;
@@ -59,7 +61,7 @@ class CheckoutService{
 
             /** @var CartItemData $item */
             foreach($checkout_data->cart->items as $item) {
-                $product = product::where('sku', $item->sku)->lockForUpdate()->firstOrFail();
+                $product = Product::where('sku', $item->sku)->lockForUpdate()->firstOrFail();
 
                 if ($product->stock < $item->quantity) {
                     throw new \Exception("Stock Not Available");
@@ -88,6 +90,10 @@ class CheckoutService{
             return $sales_order;
         });
 
-        return SalesOrderData::fromModel($sales_order);
+        $data = SalesOrderData::fromModel($sales_order);
+
+        event(new SalesOrderCreatedEvent($data));
+
+        return $data;
     }
 }

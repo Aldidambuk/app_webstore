@@ -19,7 +19,7 @@ class SalesOrderData extends Data
     public string $shipping_total_formatted;
 
     #[Computed]
-    public string $total_formetted;
+    public string $total_formatted;
 
     #[Computed]
     public string $created_at_formatted;
@@ -51,7 +51,7 @@ class SalesOrderData extends Data
     ) {
         $this->sub_total_formatted = Number::currency($sub_total);
         $this->shipping_total_formatted = Number::currency($shipping_cost);
-        $this->total_formetted = Number::currency($total);
+        $this->total_formatted = Number::currency($total);
 
         $this->created_at_formatted = $created_at->translatedFormat('D F Y H:i');
         $this->due_date_at_formatted = $due_date_at->translatedFormat('D F Y H:i');

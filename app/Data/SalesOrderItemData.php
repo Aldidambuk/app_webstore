@@ -13,7 +13,7 @@ class SalesOrderItemData extends Data
     public string $price_formatted;
 
     #[Computed]
-    public string $total_formated;
+    public string $total_formatted;
 
     public function __construct(
         public string $name,
@@ -28,6 +28,6 @@ class SalesOrderItemData extends Data
         public int $weight
     ) {
         $this->price_formatted = Number::currency($price);
-        $this->total_formated = Number::currency($total);   
+        $this->total_formatted = Number::currency($total);   
     }
 }
