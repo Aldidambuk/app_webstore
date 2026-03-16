@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace App\Data;
 
-use App\Models\product;
+use App\Models\Product;
 use Illuminate\Support\Number;
 use Spatie\LaravelData\Attributes\Computed;
 use Spatie\LaravelData\Data;
@@ -28,7 +28,7 @@ class ProductData extends Data
         $this->price_formatted = Number::currency($price);
     }
 
-    public static function fromModel(product $product, bool $with_gallery = false) : self
+    public static function fromModel(Product $product, bool $with_gallery = false) : self
     {
         return new self(
             $product->name,
