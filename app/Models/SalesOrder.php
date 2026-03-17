@@ -17,7 +17,8 @@ class SalesOrder extends Model
     protected $casts = [
         'status' => SalesOrderState::class,
         'payment_payload' => 'json',
-        'due_date_at' => 'datetime'
+        'due_date_at' => 'datetime',
+        'payment_paid_at' => 'datetime'
     ];
 
     public function items() : HasMany
