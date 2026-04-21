@@ -18,7 +18,7 @@ class SalesOrderDetail extends Component
         return view('livewire.sales-order-detail', [
             'order' => $sales_order_data,
             'is_redirect'   => $service->shouldShowButton($sales_order_data),
-            'redirect-url'  => $service->getRedirecturl($sales_order_data)
+            'redirect_url'  => $service->getRedirecturl($sales_order_data)
 
         ]);
     }

@@ -42,7 +42,7 @@ class OfflineShippingDriver implements ShippingDriverInterFace
 
     public function getRate(
         RegionData $origin, 
-        RegionData $destionation, 
+        RegionData $destination, 
         CartData $cart, 
         ShippingServiceData $shipping_service
         ): ?ShippingData
@@ -60,7 +60,7 @@ class OfflineShippingDriver implements ShippingDriverInterFace
                     'cost' => 15000,
                     'weight' => $cart->total_weight,
                     'origin' => $origin,
-                    'destination' => $destionation
+                    'destination' => $destination
                 ]);
                 break;
             case 'offline-flat-5':
@@ -72,7 +72,7 @@ class OfflineShippingDriver implements ShippingDriverInterFace
                     'cost' => 5000,
                     'weight' => $cart->total_weight,
                     'origin' => $origin,
-                    'destination' => $destionation
+                    'destination' => $destination
                 ]);
                 break;
         }
