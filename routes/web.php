@@ -23,6 +23,8 @@ Route::get('/checkout', Checkout::class)->name('checkout');
 Route::get('/order-confirmed/{sales_order:trx_id}', SalesOrderDetail::class)->name('order-confirmed');
 Route::view('/page', 'pages.page')->name('page');
 
+Route::webhooks('moota/callback');
+
 Route::get('/mailable', function() {
     return new ShippingReceiptNumberUpdateMail(
         SalesOrderData::from(
